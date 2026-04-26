@@ -22,6 +22,7 @@ def update():
 def delete(habit_id):
     habit_id = int(habit_id)
     db.delete_habit(habit_id)
+    return redirect(url_for('index'))
     
 if __name__ == '__main__':
     db.init_db()
