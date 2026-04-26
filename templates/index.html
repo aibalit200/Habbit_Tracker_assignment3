@@ -27,7 +27,7 @@
                 <input type="text" name="new_name" value="{{ habit[1] }}" required>
                 <button type="submit">Update</button>
             </form>
-            <a href="/delete/{{ habit[0] }}" onclick="return confirm('Delete?')">❌ Delete</a>
+            <a href="/delete/{{ habit[0] }}" onclick="return confirm('Delete?')">Delete</a>
         </li>
         {% endfor %}
     </ul>
