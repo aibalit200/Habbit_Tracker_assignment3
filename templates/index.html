@@ -62,13 +62,13 @@
                     <input type="text" name="name" value="{{ habit[1] }}" required>
                     <input type="text" name="desc" value="{{ habit[2] or '' }}">
                     <select name="day">
-                        <option>Monday</option>
-                        <option>Tuesday</option>
-                        <option>Wednesday</option>
-                        <option>Thursday</option>
-                        <option>Friday</option>
-                        <option>Saturday</option>
-                        <option>Sunday</option>
+                        <option value="Monday" {% if habit[3] == 'Monday' %}selected{% endif %}>Monday</option>
+                        <option value="Tuesday" {% if habit[3] == 'Tuesday' %}selected{% endif %}>Tuesday</option>
+                        <option value="Wednesday" {% if habit[3] == 'Wednesday' %}selected{% endif %}>Wednesday</option>
+                        <option value="Thursday" {% if habit[3] == 'Thursday' %}selected{% endif %}>Thursday</option>
+                        <option value="Friday" {% if habit[3] == 'Friday' %}selected{% endif %}>Friday</option>
+                        <option value="Saturday" {% if habit[3] == 'Saturday' %}selected{% endif %}>Saturday</option>
+                        <option value="Sunday" {% if habit[3] == 'Sunday' %}selected{% endif %}>Sunday</option>
                     </select>
                     <input type="hidden" name="current_day" value="{{ day }}">
                     <button type="submit">Update</button>
