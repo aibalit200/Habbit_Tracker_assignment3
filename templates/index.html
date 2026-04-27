@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Habit Tracker</title>
+    <script>
+        function changeDay() {
+            var selected = document.getElementById('daySelect').value;
+            window.location.href = '/' + '?day=' + selected;
+        }
+    </script>
+</head>
+<body>
+
+    <div>
+        <strong>Day: {{ day }}</strong>
+        <select id="daySelect" onchange="changeDay()">
+            <option value="Monday" {% if day == 'Monday' %}selected{% endif %}>Monday</option>
+            <option value="Tuesday" {% if day == 'Tuesday' %}selected{% endif %}>Tuesday</option>
+            <option value="Wednesday" {% if day == 'Wednesday' %}selected{% endif %}>Wednesday</option>
+            <option value="Thursday" {% if day == 'Thursday' %}selected{% endif %}>Thursday</option>
+            <option value="Friday" {% if day == 'Friday' %}selected{% endif %}>Friday</option>
+            <option value="Saturday" {% if day == 'Saturday' %}selected{% endif %}>Saturday</option>
+            <option value="Sunday" {% if day == 'Sunday' %}selected{% endif %}>Sunday</option>
+        </select>
+    </div>
+
+    <h1>Habit Tracker</h1>
+
+    <form action="/add" method="POST">
+        <input type="text" name="name" placeholder="Habit name" required>
+        <input type="text" name="desc" placeholder="Description">
+        
+        <label>
+            <input type="checkbox" name="all_days" value="yes">
+            Add to all days of the week
+        </label>
+        
+        <select name="day" required>
+            <option value="">Select day</option>
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+            <option>Saturday</option>
+            <option>Sunday</option>
+        </select>
+        
+        <input type="hidden" name="current_day" value="{{ day }}">
+        
+        <button type="submit">Add Habit</button>
+    </form>
+
+    <hr>
+
+    <h2>In Work</h2>
+    {% if inwork %}
+        <ul>
+        {% for habit in inwork %}
+            <li>
+                <form action="/update/{{ habit[0] }}" method="POST">
+                    <input type="text" name="name" value="{{ habit[1] }}" required>
+                    <input type="text" name="desc" value="{{ habit[2] or '' }}">
+                    <select name="day">
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+                    </select>
+                    <input type="hidden" name="current_day" value="{{ day }}">
+                    <button type="submit">Update</button>
+                    <a href="/delete/{{ habit[0] }}?day={{ day }}">Delete</a>
+                    <a href="/complete/{{ habit[0] }}?day={{ day }}">Complete</a>
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No habits in work for this day.</p>
+    {% endif %}
+
+    <h2>Completed</h2>
+    {% if completed %}
+        <ul>
+        {% for habit in completed %}
+            <li>
+                <strong>{{ habit[1] }}</strong>
+                <a href="/restore/{{ habit[0] }}?day={{ day }}">Restore</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No completed habits for this day.</p>
+    {% endif %}
+
+</body>
+</html>
