@@ -31,11 +31,12 @@ def update(id):
 @app.route('/action/<string:act>/<int:id>')
 def action(act, id):
     day = request.args.get('day', datetime.now().strftime('%A'))
-    {
-        'delete': db.delete_habit,
-        'complete': db.complete_habit,
-        'restore': db.restore_habit
-    }[act](id)
+    if act == 'delete':
+        db.delete_habit(id)
+    elif act == 'complete':
+        db.complete_habit(id)
+    elif act == 'restore':
+        db.restore_habit(id)
     return redirect(url_for('index', day=day))
 
 if __name__ == '__main__':
