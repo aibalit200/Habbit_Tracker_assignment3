@@ -1,29 +1,42 @@
 from flask import Flask, render_template, request, redirect, url_for
 import database as db
+from datetime import datetime
 
 app = Flask(__name__)
 @app.route('/')
 def index():
-    habits = db.get_all_habits()
-    return render_template('index.html',habits=habits)
+    day = request.args.get('day', datetime.now().strftime('%A'))
+    return render_template('index.html', day=day, inwork=db.get_habits(day, 0), completed=db.get_habits(day, 1))
+
 @app.route('/add', methods=['POST'])
 def add():
     name = request.form['name']
-    if name:
-        db.add_habit(name)
-    return redirect(url_for('index'))
-@app.route('/update', methods=['POST'])
-def update():
-    habit_id = request.form['id']
-    new_name = request.form['new_name']
-    db.update_habit(habit_id, new_name)
-    return redirect(url_for('index'))
-@app.route('/delete/<habit_id>')
-def delete(habit_id):
-    habit_id = int(habit_id)
-    db.delete_habit(habit_id)
-    return redirect(url_for('index'))
+    desc = request.form.get('desc', '')
+    current = request.form.get('current_day', datetime.now().strftime('%A'))
+    if request.form.get('all_days'):
+        for d in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
+            db.add_habit(name, desc, d)
+    else:
+        day = request.form['day']
+        if name and day:
+            db.add_habit(name, desc, day)
+    return redirect(url_for('index', day=current))
 
+@app.route('/update/<int:id>', methods=['POST'])
+def update(id):
+    current = request.form.get('current_day', datetime.now().strftime('%A'))
+    db.update_habit(id, request.form['name'], request.form.get('desc', ''), request.form['day'])
+    return redirect(url_for('index', day=current))
+
+@app.route('/action/<string:act>/<int:id>')
+def action(act, id):
+    day = request.args.get('day', datetime.now().strftime('%A'))
+    {
+        'delete': db.delete_habit,
+        'complete': db.complete_habit,
+        'restore': db.restore_habit
+    }[act](id)
+    return redirect(url_for('index', day=day))
 
 if __name__ == '__main__':
     db.init_db()
